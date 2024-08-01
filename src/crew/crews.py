@@ -7,8 +7,15 @@ _verbose = load_bool_env("VERBOSE_MODE", True)
 _llm = create_custom_llm()
 
 code_generation_crew = Crew(
-    agents=[agents.software_engineer_agent, agents.code_reviewer_agent],
+    agents=[agents.code_generator_agent, agents.code_reviewer_agent],
     tasks=[tasks.code_generation_task, tasks.code_review_task],
+    manager_llm=_llm,
+    verbose=_verbose,
+)
+
+code_processing_crew = Crew(
+    agents=[agents.software_engineer_agent],
+    tasks=[tasks.code_generation_and_execution_task],
     manager_llm=_llm,
     verbose=_verbose,
 )

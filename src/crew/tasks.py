@@ -2,6 +2,14 @@ from crewai import Task
 
 from crew import agents
 
+code_generation_and_execution_task = Task(
+    description="""Answer the provided prompt, generating Python code as needed, if any.
+        Prompt: {base_prompt}""",
+    expected_output="""Answer to the following prompt, using the same language as used in the prompt.
+        Prompt: {base_prompt}""",
+    agent=agents.software_engineer_agent,
+)
+
 code_generation_task = Task(
     description="""Generate Python code based on the given requirements and constraints.
         The code should be correct, clean, and follow the best practices and standards of Python development.
@@ -9,7 +17,7 @@ code_generation_task = Task(
         Consider the current libraries as matplotlib, langchain, crewai, flask, scikit-learn and sqlalchemy.
         The final result should contain only the code, without any explanation or formatting, without even markdown notation.""",
     expected_output="""Correct, clean Python code that follows the best practices and standards of Python development.""",
-    agent=agents.software_engineer_agent,
+    agent=agents.code_generator_agent,
 )
 
 code_review_task = Task(
