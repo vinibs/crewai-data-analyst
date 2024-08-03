@@ -1,4 +1,10 @@
+import os
+
+from dotenv import find_dotenv, load_dotenv
+
 from crew import crews
+
+load_dotenv(find_dotenv())
 
 
 def generate_code_only():
@@ -23,9 +29,70 @@ def code_executioner():
     return result
 
 
+def data_anylisis_from_db():
+    db_credentials = {
+        "type": os.getenv("DB_TYPE"),
+        "host": os.getenv("DB_HOST"),
+        "port": os.getenv("DB_PORT"),
+        "user": os.getenv("DB_USER"),
+        "password": os.getenv("DB_PASSWORD"),
+        "database": os.getenv("DB_DATABASE"),
+    }
+
+    base_prompt = (
+        "Analyse the data from the database and provide a insights on where to explore to increase my selling numbers of motorcycle parts."
+        f"The database credentials are as follows: {str(db_credentials)}."
+        "Connect to the database and explore the data to find the insights as needed."
+    )
+    crew = crews.data_analysis_crew
+    result = crew.kickoff(inputs={"base_prompt": base_prompt})
+    return result
+
+
+def data_anylisis_from_data():
+    base_prompt = (
+        "Analyse the following data and provide a insights on where to explore to increase my selling numbers of motorcycle parts."
+        "Data:"
+        """
+        Total Sales: 16871906.1971
+        Average Sale Price: 59.20135128081329
+        Top Customers:
+        CLIENTE
+        151467    874314.8672
+        150132    610319.1386
+        150625    346462.8396
+        150682    334230.7831
+        150551    304687.8754
+        151423    287223.3100
+        152131    269582.3100
+        150453    265137.5099
+        150251    253112.9621
+        150944    243412.7202
+        Name: VENDA TOTAL, dtype: float64
+        Quantity Sold Analysis:
+            QUANTIDADE COMRPADA  COUNT
+        16                    2  14132
+        24                   10  12013
+        15                    1  10627
+        19                    5  10605
+        17                    3   7318
+        34                   20   4603
+        18                    4   4539
+        20                    6   2954
+        43                   30   1710
+        57                   50   1255
+        """
+    )
+    crew = crews.data_analysis_crew
+    result = crew.kickoff(inputs={"base_prompt": base_prompt})
+    return result
+
+
 def main():
     # result = generate_code_only()
-    result = code_executioner()
+    # result = code_executioner()
+    # result = data_anylisis_from_db()
+    result = data_anylisis_from_data()
     print(result)
 
 

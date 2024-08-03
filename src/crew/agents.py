@@ -2,11 +2,12 @@ import logging
 
 from crewai import Agent
 
+from crew.tools import CustomCodeInterpreterTool
 from utils import create_custom_llm, load_bool_env
 
 logger = logging.getLogger(__name__)
 
-_max_agent_iterations = 5
+_max_agent_iterations = 15
 _verbose = load_bool_env("VERBOSE_MODE", True)
 _llm = create_custom_llm()
 
@@ -52,6 +53,41 @@ software_engineer_agent = Agent(
         You have worked on various projects and have a deep understanding of the best practices and standards in Python development.""",
     allow_delegation=False,
     allow_code_execution=True,
+    max_iter=_max_agent_iterations,
+    llm=_llm,
+    verbose=_verbose,
+)
+
+
+data_analyst_agent = Agent(
+    role="Data Analyst",
+    goal="""Assess the data available for analysis and answer the provided prompt request.
+        Use your expertise in data analysis through Python to generate and execute code as needed to get and process the data.
+
+        Never assume a database structure or table name if it's not explicitly provided in the prompt.
+        In this case, firstly fetch the database to understand its structure, for both the table and column names.
+        Always use the credentials provided in the prompt to connect to the database, when a connection is needed.
+        When connecting to the database, always close the connection at the end of the code.
+        If no database access is provided, but the data is available, use the data provided to answer the prompt.
+        If dealing with static data, use it as is, without any modifications. Analyse it and answer the prompt directly.
+        Always escape double quotes inside strings.
+        Always wrap column names in escaped double quotes when using them in SQL queries.
+        Prioritize using SQLAlchemy to connect to a database when necessary.
+        Always wrap SQL code inside a text() function from SQLAlchemy to prevent errors.
+        Never simulate any data. If no database access or data is provided, return a message stating that you were unable to access the data.
+        If a connection to the database is needed, ensure to close the connection after the data is fetched.
+        Never assume any variable or function is defined from previous steps.
+        Consider every code generation as a new execution in a clean environment.
+        When connecting to a database, never, in any circumstance, use any operation other than SELECT.
+        Your code should never run any operation in the host system or that modifies the database.
+        Always print the result in the end of the code generated.
+
+        If the generated code already prints the result, answer with it directly instead of trying a new execution.
+        The result should answer to the following prompt request, in the same language it was asked:
+        {base_prompt}""",
+    backstory="""You are a senior Data Analyst and Python Developer with 10+ years of experience in data analysis using Python.""",
+    allow_delegation=False,
+    tools=[CustomCodeInterpreterTool()],
     max_iter=_max_agent_iterations,
     llm=_llm,
     verbose=_verbose,

@@ -19,3 +19,10 @@ code_processing_crew = Crew(
     manager_llm=_llm,
     verbose=_verbose,
 )
+
+data_analysis_crew = Crew(
+    agents=[agents.data_analyst_agent],
+    tasks=[tasks.data_analysis_task],
+    manager_llm=_llm,
+    verbose=_verbose,
+)

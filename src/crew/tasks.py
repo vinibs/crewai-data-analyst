@@ -30,3 +30,13 @@ code_review_task = Task(
     expected_output="""Correct, clean Python code that follows the best practices and standards of Python development.""",
     agent=agents.code_reviewer_agent,
 )
+
+data_analysis_task = Task(
+    description="""Analyse data from the provided source and get the results in a meaningful format.
+        Consider the data source as informed in the provided prompt.
+        Answer the provided prompt, generating Python code as needed, if any.
+        Prompt: {base_prompt}""",
+    expected_output="""Answer to the following prompt, using the same language as used in the prompt.
+        Prompt: {base_prompt}""",
+    agent=agents.data_analyst_agent,
+)
