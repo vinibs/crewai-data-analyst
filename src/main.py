@@ -88,11 +88,32 @@ def data_anylisis_from_data():
     return result
 
 
+def data_anylisis_from_db_portuguese():
+    db_credentials = {
+        "type": os.getenv("DB_TYPE"),
+        "host": os.getenv("DB_HOST"),
+        "port": os.getenv("DB_PORT"),
+        "user": os.getenv("DB_USER"),
+        "password": os.getenv("DB_PASSWORD"),
+        "database": os.getenv("DB_DATABASE"),
+    }
+
+    base_prompt = (
+        "Analise os dados do banco de dados e forneça insights sobre onde explorar para aumentar meus números de venda de peças de motocicleta."
+        f"As credenciais do banco de dados são as seguintes: {str(db_credentials)}."
+        "Conecte-se ao banco de dados e explore os dados para encontrar os insights conforme necessário."
+    )
+    crew = crews.data_analysis_crew
+    result = crew.kickoff(inputs={"base_prompt": base_prompt})
+    return result
+
+
 def main():
     # result = generate_code_only()
     # result = code_executioner()
     # result = data_anylisis_from_db()
-    result = data_anylisis_from_data()
+    result = data_anylisis_from_db_portuguese()
+    # result = data_anylisis_from_data()
     print(result)
 
 

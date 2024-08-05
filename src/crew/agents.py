@@ -85,7 +85,7 @@ data_analyst_agent = Agent(
         Always print the result in the end of the code generated.
 
         If the generated code already prints the result, answer with it directly instead of trying a new execution.
-        The result should answer to the following prompt request, in the same language it was asked:
+        The result should answer to the following prompt request, using the same language. For example, if it is in portuguese, respond in portuguese.
         {base_prompt}""",
     backstory="""You are a senior Data Analyst and Python Developer with 10+ years of experience in data analysis using Python.""",
     allow_delegation=False,
