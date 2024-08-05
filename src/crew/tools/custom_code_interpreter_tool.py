@@ -1,3 +1,5 @@
+from contextlib import redirect_stdout
+from io import StringIO
 from typing import List
 
 import docker
@@ -5,8 +7,9 @@ from crewai_tools import CodeInterpreterTool
 
 
 class CustomCodeInterpreterTool(CodeInterpreterTool):
-    def __init__(self):
+    def __init__(self, *, run_in_docker: bool = True):
         super().__init__()
+        self._run_in_docker = run_in_docker
         self._python_lib_os_dependencies = {
             "psycopg2": ["libpq-dev"],
             "mariadb": ["default-libmysqlclient-dev"],
@@ -51,7 +54,10 @@ class CustomCodeInterpreterTool(CodeInterpreterTool):
         default_libraries = list(self._python_lib_os_dependencies.keys())
         all_libraries = list(set([*libraries_used, *default_libraries]))
 
-        return self.run_code_in_docker(code, all_libraries)
+        if self._run_in_docker:
+            return self.run_code_in_docker(code, all_libraries)
+
+        return self.run_code_locally(code)
 
     def run_code_in_docker(self, code: str, libraries_used: List[str]) -> str:
         super()._verify_docker_image()
@@ -67,3 +73,14 @@ class CustomCodeInterpreterTool(CodeInterpreterTool):
         if exec_result.exit_code != 0:
             return f"Something went wrong while running the code: \n{exec_result.output.decode('utf-8')}"
         return exec_result.output.decode("utf-8")
+
+    def run_code_locally(self, code: str) -> str:
+        output_file_string = StringIO()
+        with redirect_stdout(output_file_string):
+            try:
+                exec(code)
+
+            except Exception as e:
+                return str(e)
+
+        return output_file_string.getvalue()

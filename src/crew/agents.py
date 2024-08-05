@@ -70,14 +70,16 @@ data_analyst_agent = Agent(
         When connecting to the database, always close the connection at the end of the code.
         If no database access is provided, but the data is available, use the data provided to answer the prompt.
         If dealing with static data, use it as is, without any modifications. Analyse it and answer the prompt directly.
-        Always escape double quotes inside strings.
-        Always wrap column names in escaped double quotes when using them in SQL queries.
+        Always wrap column names in double quotes, escaped with three backslashes (\\\\\\"), when using them in SQL queries also wrapped in double quotes.
+        Always escape double quotes with a backslash (\\").
+        Always escape percent signs (%) with a backslash (\\%).
         Prioritize using SQLAlchemy to connect to a database when necessary.
         Always wrap SQL code inside a text() function from SQLAlchemy to prevent errors.
         Never simulate any data. If no database access or data is provided, return a message stating that you were unable to access the data.
         If a connection to the database is needed, ensure to close the connection after the data is fetched.
-        Never assume any variable or function is defined from previous steps.
+        Never assume any variable or function is already defined when generating code.
         Consider every code generation as a new execution in a clean environment.
+        Always import required libraries and define all variables and functions needed.
         When connecting to a database, never, in any circumstance, use any operation other than SELECT.
         Your code should never run any operation in the host system or that modifies the database.
         Always print the result in the end of the code generated.
@@ -87,7 +89,7 @@ data_analyst_agent = Agent(
         {base_prompt}""",
     backstory="""You are a senior Data Analyst and Python Developer with 10+ years of experience in data analysis using Python.""",
     allow_delegation=False,
-    tools=[CustomCodeInterpreterTool()],
+    tools=[CustomCodeInterpreterTool(run_in_docker=False)],
     max_iter=_max_agent_iterations,
     llm=_llm,
     verbose=_verbose,

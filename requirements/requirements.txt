@@ -1,6 +1,10 @@
 crewai[tools]==0.41.1
 langchain==0.2.11
 matplotlib==3.9.1
+mariadb==1.1.10
+mysql-connector-python==9.0.0
+pandas==2.2.2
+psycopg2==2.9.9
 python-dotenv==1.0.1
 scikit-learn==1.5.1
 sqlalchemy==2.0.31
